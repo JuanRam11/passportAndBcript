@@ -6,7 +6,7 @@ const { Sequelize, DataTypes, UUID, UUIDV4 } = require('sequelize');
 const port = process.env.port || 3000;
 const bcrypt = require('bcrypt');
 const sequelize = new Sequelize(
-  'postgres://postgres:seMEolvido11@127.0.0.1:5432/passport'
+  'postgres://postgres:yourpassword@127.0.0.1:5432/passport'
 );
 const session = require('express-session');
 const methodOverride = require('method-override');
