@@ -47,6 +47,7 @@ passport.use(
       if (result) {
         return done(null, user);
       } else {
+        next(err);
         return done(null, false);
       }
     });
@@ -113,7 +114,12 @@ app.get('/login', isNotAuthenticated, (req, res, next) => {
 });
 
 app.post('/login', passport.authenticate('local'), async (req, res, next) => {
-  res.redirect('/secret');
+  const { username, password } = req.body;
+  if (username || password == undefined) {
+    alert(`add username or password`);
+  } else {
+    res.redirect('/secret');
+  }
 });
 
 app.get('/register', isNotAuthenticated, (req, res, next) => {
@@ -121,17 +127,23 @@ app.get('/register', isNotAuthenticated, (req, res, next) => {
 });
 
 app.post('/register', async (req, res, next) => {
-  const { username, password } = req.body;
-  //const salt = bcrypt.genSalt(12);
-  const hash = await bcrypt.hash(password, 12);
-  console.log(hash);
-  const createdUser = await User.create({ username: username, password: hash });
-  req.login(createdUser, (err) => {
-    if (err) {
-      return next(err);
-    }
-    return res.redirect('/secret');
-  });
+  const { username = '', password = '' } = req.body;
+  if (username == '' || password == '') {
+    console.log(username);
+  } else {
+    console.log(username);
+    const hash = await bcrypt.hash(password, 12);
+    const createdUser = await User.create({
+      username: username,
+      password: hash,
+    });
+    req.login(createdUser, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/secret');
+    });
+  }
 });
 
 /* app.get('/bcrypt', (req, res, next) => {
