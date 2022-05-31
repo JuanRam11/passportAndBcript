@@ -1,6 +1,6 @@
-# passport
+## passport
 
-##To test this app
+# To test this app
 
 First you need MySQL or PostgreSQL database intall on your system, then you need to run
 npm install on a terminal to install all project dependencies.

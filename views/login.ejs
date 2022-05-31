@@ -15,18 +15,40 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-12 col-sm-12 col-md-6 col-xl-6">
-          <div class="d-flex">
-            <h1>Login</h1>
-            <form action="/login" method="POST">
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username" />
-              <label for="password">Password</label>
-              <input type="password" id="password" name="password" />
-              <button type="submit" class="btn btn-primary">Login</button>
+        <div class="col-12 col-sm-12 col-md-12 col-xl-12 m-auto d-flex vh-100">
+          <div
+            class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-4 m-auto border rounded p-4"
+          >
+            <h1 class="text-center p-3">Login</h1>
+            <form action="/login" method="POST" cla>
+              <label for="username" class="form-label py-1">Username:</label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                class="form-control"
+              />
+              <label for="password" class="form-label py-1">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+              />
+              <div class="d-grid gap-2 col-12 pt-3 mx-auto">
+                <button class="btn btn-primary" type="submit">Log in</button>
+              </div>
             </form>
+            <div class="text-center d-grid gap-2 col-12 mx-auto">
+              <h3>Or</h3>
+
+              <a href="http://localhost:3000/register" class="btn btn-success"
+                >Register</a
+              >
+            </div>
           </div>
         </div>
+        <div></div>
       </div>
     </div>
   </body>
