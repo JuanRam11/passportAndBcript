@@ -98,11 +98,11 @@ const isNotAuthenticated = (req, res, next) => {
 
 //To create database and table with all columns RUN FIRST
 
-/* app.get('/sync', async (req, res) => {
+app.get('/sync', async (req, res) => {
   const user = await sequelize.sync({ force: true });
   console.log(user);
   res.send('hecho');
-}); */
+});
 
 app.get('/secret', isAutehticated, async (req, res, next) => {
   console.log(req.user);
