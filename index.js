@@ -105,7 +105,6 @@ app.get('/sync', async (req, res) => {
 });
 
 app.get('/secret', isAutehticated, async (req, res, next) => {
-  console.log(req.user);
   res.render('secret');
 });
 

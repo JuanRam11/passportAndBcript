@@ -5,6 +5,8 @@
 First you need MySQL or PostgreSQL database intall on your system, then you need to run
 npm install on a terminal to install all project dependencies.
 
+Go to your database app and created the database manually with not tables in it.
+
 After that you need to change the query string or conection string for the one you use on your database
 if you using PostgreSQL is something like this:
 
