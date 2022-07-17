@@ -6,7 +6,7 @@ const { Sequelize, DataTypes, UUID, UUIDV4 } = require('sequelize');
 const port = process.env.port || 3000;
 const bcrypt = require('bcrypt');
 const sequelize = new Sequelize(
-  'postgres://postgres:yourpassword@127.0.0.1:5432/passport'
+  'postgres://postgres:semeolvido@127.0.0.1:5432/passport'
 );
 const session = require('express-session');
 const methodOverride = require('method-override');
@@ -44,6 +44,7 @@ passport.use(
       return done(null, false);
     }
     await bcrypt.compare(passsword, user.dataValues.password, (err, result) => {
+      console.log(result);
       if (result) {
         return done(null, user);
       } else {
@@ -113,12 +114,7 @@ app.get('/login', isNotAuthenticated, (req, res, next) => {
 });
 
 app.post('/login', passport.authenticate('local'), async (req, res, next) => {
-  const { username, password } = req.body;
-  if (username || password == undefined) {
-    alert(`add username or password`);
-  } else {
-    res.redirect('/secret');
-  }
+  res.redirect('/secret');
 });
 
 app.get('/register', isNotAuthenticated, (req, res, next) => {
