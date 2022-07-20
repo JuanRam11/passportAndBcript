@@ -6,7 +6,7 @@ const { Sequelize, DataTypes, UUID, UUIDV4 } = require('sequelize');
 const port = process.env.port || 3000;
 const bcrypt = require('bcrypt');
 const sequelize = new Sequelize(
-  'postgres://postgres:semeolvido@127.0.0.1:5432/passport'
+   'postgres://postgres:semeolvido@127.0.0.1:5432/passport'
 );
 const session = require('express-session');
 const methodOverride = require('method-override');
@@ -14,21 +14,25 @@ const methodOverride = require('method-override');
 const app = express();
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
-  session({ secret: 'Secret session', saveUninitialized: false, resave: false })
+   session({
+      secret: 'Secret session',
+      saveUninitialized: false,
+      resave: false,
+   })
 );
 app.use(methodOverride('_method'));
 app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(
-  new passportLocal(async (username, passsword, done) => {
-    const user = await User.findOne({ where: { username: username } });
-    /*     if (!user) {
+   new passportLocal(async (username, passsword, done) => {
+      const user = await User.findOne({ where: { username: username } });
+      /*     if (!user) {
             console.log('usuario no encontrado');
             return done(null, false);
         }
@@ -39,106 +43,107 @@ passport.use(
         }
         return done(null, user) */
 
-    //CON BCRYPT
-    if (!user) {
-      return done(null, false);
-    }
-    await bcrypt.compare(passsword, user.dataValues.password, (err, result) => {
-      console.log(result);
-      if (result) {
-        return done(null, user);
-      } else {
-        next(err);
-        return done(null, false);
+      //CON BCRYPT
+      if (!user) {
+         return done(null, false);
       }
-    });
-  })
+      await bcrypt.compare(
+         passsword,
+         user.dataValues.password,
+         (err, result, next) => {
+            if (result) {
+               return done(null, user);
+            } else {
+               next(err);
+               return done(null, false);
+            }
+         }
+      );
+   })
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+   done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-  done(null, id);
+   done(null, id);
 });
 
 const User = sequelize.define(
-  'userpp',
-  {
-    id: {
-      type: UUID,
-      defaultValue: UUIDV4,
-      allowNull: false,
-      unique: true,
-      primaryKey: true,
-    },
-    username: {
-      type: DataTypes.STRING,
-    },
-    password: {
-      type: DataTypes.STRING,
-    },
-  },
-  {
-    freezeTableName: true,
-  }
+   'userpp',
+   {
+      id: {
+         type: UUID,
+         defaultValue: UUIDV4,
+         allowNull: false,
+         unique: true,
+         primaryKey: true,
+      },
+      username: {
+         type: DataTypes.STRING,
+      },
+      password: {
+         type: DataTypes.STRING,
+      },
+   },
+   {
+      freezeTableName: true,
+   }
 );
 
 const isAutehticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('login');
+   if (req.isAuthenticated()) {
+      return next();
+   }
+   res.redirect('login');
 };
 
 const isNotAuthenticated = (req, res, next) => {
-  if (!req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('secret');
+   if (!req.isAuthenticated()) {
+      return next();
+   }
+   res.redirect('secret');
 };
 
 //To create database and table with all columns RUN FIRST
 
 app.get('/sync', async (req, res) => {
-  await sequelize.sync({ force: true });
-  res.send('Database Created');
+   await sequelize.sync({ force: true });
+   res.send('Database Created');
 });
 
 app.get('/secret', isAutehticated, async (req, res, next) => {
-  res.render('secret');
+   res.render('secret');
 });
 
 app.get('/login', isNotAuthenticated, (req, res, next) => {
-  res.render('login');
+   res.render('login');
 });
 
 app.post('/login', passport.authenticate('local'), async (req, res, next) => {
-  res.redirect('/secret');
+   res.redirect('/secret');
 });
 
 app.get('/register', isNotAuthenticated, (req, res, next) => {
-  res.render('register');
+   res.render('register');
 });
 
 app.post('/register', async (req, res, next) => {
-  const { username = '', password = '' } = req.body;
-  if (username == '' || password == '') {
-    console.log(username);
-  } else {
-    console.log(username);
-    const hash = await bcrypt.hash(password, 12);
-    const createdUser = await User.create({
-      username: username,
-      password: hash,
-    });
-    req.login(createdUser, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.redirect('/secret');
-    });
-  }
+   const { username = '', password = '' } = req.body;
+   if (username == '' || password == '') {
+   } else {
+      const hash = await bcrypt.hash(password, 12);
+      const createdUser = await User.create({
+         username: username,
+         password: hash,
+      });
+      req.login(createdUser, (err) => {
+         if (err) {
+            return next(err);
+         }
+         return res.redirect('/secret');
+      });
+   }
 });
 
 /* app.get('/bcrypt', (req, res, next) => {
@@ -162,10 +167,13 @@ app.post('/bcrypt', async (req, res, next) => {
 }); */
 
 app.delete('/logout', async (req, res, next) => {
-  req.logOut();
-  res.redirect('login');
+   const logOut = () => {
+      req.logOut();
+   };
+   logOut();
+   res.redirect('login');
 });
 
 app.listen(port, () => {
-  console.log(`Running at port: ${port}`);
+   console.log(`Running at port: ${port}`);
 });
