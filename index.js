@@ -43,23 +43,25 @@ passport.use(
     if (!user) {
       return done(null, false);
     }
-    await bcrypt.compare(passsword, user.dataValues.password, (err, result) => {
-      console.log(result);
-      if (result) {
-        return done(null, user);
-      } else {
-        next(err);
-        return done(null, false);
+    await bcrypt.compare(
+      passsword,
+      user.dataValues.password,
+      (err, result, next) => {
+        if (result) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+        }
       }
-    });
+    );
   })
 );
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
-passport.deserializeUser((id, done) => {
-  done(null, id);
+passport.deserializeUser((_id, done) => {
+  done(null, _id);
 });
 
 const User = sequelize.define(
@@ -124,9 +126,7 @@ app.get('/register', isNotAuthenticated, (req, res, next) => {
 app.post('/register', async (req, res, next) => {
   const { username = '', password = '' } = req.body;
   if (username == '' || password == '') {
-    console.log(username);
   } else {
-    console.log(username);
     const hash = await bcrypt.hash(password, 12);
     const createdUser = await User.create({
       username: username,
